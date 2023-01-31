@@ -44,7 +44,7 @@ const HomeScreen = () => {
         <AdjustmentsHorizontalIcon color='#00CCBB' />
       </View>
 
-      <ScrollView >
+      <ScrollView className="bg-neutral-100">
         {/* Body */}
         {/* Categories */}
         <Categories />
