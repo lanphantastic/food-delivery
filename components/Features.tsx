@@ -3,12 +3,13 @@ import { ArrowRightIcon } from 'react-native-heroicons/outline'
 import { RestaurantCard } from './RestaurantCard'
 
 interface props {
-  id: string | number
+  key: string
+  id: string
   title: string
   description: string
 }
 
-export const Features: React.FC<props> = ({ id, title, description }) => {
+export const Features: React.FC<props> = ({ key, id, title, description }) => {
   return (
     <View>
       <View className='mt-4 flex-row items-center justify-between px-4'>
