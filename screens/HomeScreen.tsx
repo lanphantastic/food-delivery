@@ -1,18 +1,36 @@
 import { Text, SafeAreaView, View, Image, Platform, TextInput, ScrollView } from 'react-native'
-import React, { useLayoutEffect } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { AdjustmentsHorizontalIcon, ChevronDownIcon, MagnifyingGlassIcon, UserIcon } from 'react-native-heroicons/outline'
 
 import { Categories } from '../components/Categories'
 import { Features } from '../components/Features'
+import sanityClient from '../sanity'
+import { Category } from '../models/category'
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+
+  const [loading, setLoading] = useState(false)
+  const [featuredCategories, setFeaturedCategories] = useState<Category[]>([])
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
     })
+  }, [])
+
+  useEffect(() => {
+    setLoading(true)
+    sanityClient.fetch(`* [_type == "featured"] {
+      ...,
+      restaurants[] -> {
+        ...,
+        dishes[]->{
+          
+        }
+      }
+    }`).then((data) => setFeaturedCategories(data)).catch((error) => console.log('error here:', error)).finally(() => setLoading(false))
   }, [])
 
   return (
@@ -47,15 +65,17 @@ const HomeScreen = () => {
       <ScrollView className="bg-neutral-100">
         {/* Body */}
         {/* Categories */}
-        <Categories />
+        <>
+          <Categories />
 
-        <Features id="1" title="Featured" description="Paid placements near you" />
-        <Features id="2" title="Tasty Discounts" description="Everyone's been enjoying these juicy discounts" />
-        <Features id="3" title="Offers near you!" description="Why not support your local restaurants tonight?" />
-
-        {/* {FeatureMock.map((feature: FeatureRef) => {
-          <Features title={feature.title} description={feature.description} id={feature.id} />
-        })} */}
+          {featuredCategories.map((featuredCategory) =>
+            <Features
+              key={featuredCategory._id}
+              id={featuredCategory._id}
+              title={featuredCategory.name}
+              description={featuredCategory.short_description} />
+          )}
+        </>
       </ScrollView>
     </SafeAreaView>
   )
